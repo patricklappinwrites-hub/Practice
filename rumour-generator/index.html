@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--
+  HELLO PATRICK!
+  This whole app lives in this one file. It has three parts:
+    1. HTML  — the content and structure (the words, the button, the boxes).
+    2. CSS   — the styling, inside the <style> tag (colours, fonts, spacing).
+    3. JavaScript — the behaviour, inside the <script> tag at the bottom
+                    (what happens when you click the button).
+  Anything between these arrow-and-dash markers is a "comment": notes for
+  humans that the browser ignores. Comments in CSS and JavaScript look
+  different, and you'll see those below.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deadline Day Rumour Mill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;600;700&display=swap">
+<style>
+  /* Layout: a TV "deadline day" screen. A breaking-news band, one big rumour card, a ticker of past rumours. */
+  /* These are "variables": we name each colour once, then reuse the name everywhere. */
+  :root {
+    --bg: #eef1f6;
+    --panel: #ffffff;
+    --ink: #121a2e;
+    --muted: #5a6478;
+    --band: #ffd400;      /* breaking-news yellow */
+    --band-ink: #121a2e;
+    --accent: #d7263d;    /* "EXCLUSIVE" red */
+    --line: #d5dbe6;
+    --display: "Anton", Impact, "Arial Narrow", sans-serif;
+    --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  }
+  /* Dark mode: if your device is set to dark, these colours replace the ones above. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1322; --panel: #161f35; --ink: #eef1f8; --muted: #9aa5bd;
+      --band: #ffd400; --band-ink: #121a2e; --accent: #ff4d63; --line: #2a3654;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1322; --panel: #161f35; --ink: #eef1f8; --muted: #9aa5bd;
+    --band: #ffd400; --band-ink: #121a2e; --accent: #ff4d63; --line: #2a3654;
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding-block: 28px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .band {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--band);
+    color: var(--band-ink);
+    padding: 8px 14px;
+    font-family: var(--display);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .live {
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 8px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(40px, 9vw, 64px);
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .intro { margin: 0; color: var(--muted); max-width: 60ch; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .tag {
+    align-self: flex-start;
+    font-family: var(--display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-size: 15px;
+  }
+  .rumour {
+    font-size: clamp(22px, 4.5vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .source { margin: 0; color: var(--muted); font-size: 15px; }
+  .meter { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+  .meter-bar { flex: 1; height: 8px; background: var(--line); }
+  .meter-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
+
+  button {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--bg);
+    border: 0;
+    padding: 16px 20px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent); color: #fff; }
+  button:focus-visible { outline: 3px solid var(--band); outline-offset: 3px; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 8px 0 0;
+  }
+  ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .meter-fill { transition: none; } }
+</style>
+</head>
+<body>
+<!-- Everything inside <body> is what you see on the page. -->
+<div class="wrap">
+  <div class="band"><span class="live">Live</span> Transfer deadline day</div>
+
+  <h1>Deadline Day Rumour Mill</h1>
+  <p class="intro">Every click invents a brand new transfer rumour. None of them are true. Some of them are not even possible.</p>
+
+  <!-- The "id" on each element is a name tag, so the JavaScript below can find it and change it. -->
+  <div class="card" aria-live="polite">
+    <span class="tag" id="tag">Exclusive</span>
+    <p class="rumour" id="rumour">Press the button to start the gossip.</p>
+    <p class="source" id="source">Source: nobody yet</p>
+    <div class="meter">
+      <span>Reliability</span>
+      <div class="meter-bar"><div class="meter-fill" id="meter" style="width: 0%"></div></div>
+      <span id="meter-label">0%</span>
+    </div>
+  </div>
+
+  <button id="go" type="button">Generate a rumour</button>
+
+  <h2>Earlier today</h2>
+  <ol id="history"></ol>
+  <p class="note">All players, fees and sources are made up. Clubs are real, and they would like you to know they have not agreed to any of this.</p>
+</div>
+
+<script>
+// ===== JAVASCRIPT =====
+// Lines starting with two slashes are comments in JavaScript.
+
+// LISTS (programmers call them "arrays"). Square brackets hold a list,
+// and each item is separated by a comma. Add your own jokes to any list!
+const clubs = [
+  "Arsenal", "Aston Villa", "Brighton", "Celtic", "Chelsea", "Everton",
+  "Liverpool", "Man City", "Man United", "Newcastle", "Spurs", "West Ham",
+  "Wrexham", "Real Madrid", "Barcelona", "Bayern Munich", "Accrington Stanley"
+];
+
+const players = [
+  "Dazza Pemberton-Quayle", "Lionel Fizzwick", "Kai Baguette", "Sven Thunderboots",
+  "Mo 'The Fridge' Okafor", "Bartholomew Nutmeg", "Jordi Puddleby", "Ezra Volleyhaus",
+  "Gary 'Two Lungs' Fenwick", "Pedro Offside"
+];
+
+const fees = [
+  "£95 million", "£4.20 and a sausage roll", "a signed photo of Jamie Redknapp",
+  "two goats and a pressure washer", "£1 and the club's best kit man",
+  "an undisclosed fee (it's a Greggs voucher)", "£300 million paid in Monopoly money",
+  "a lifetime supply of Bovril", "a player to be named later (probably Kevin)"
+];
+
+const twists = [
+  "He will play as a goalkeeper despite being 5ft 2.",
+  "His agent is his nan.",
+  "Medical scheduled for Tuesday, at a vet.",
+  "He has asked for his own karaoke room at the training ground.",
+  "The deal hinges on whether he can find the stadium.",
+  "He has already been photographed holding the wrong club's scarf.",
+  "The manager has never heard of him.",
+  "He wants the number 0.",
+  "Personal terms agreed, but only in Welsh."
+];
+
+const sources = [
+  "a man in a Wetherspoons", "a pigeon outside the training ground",
+  "a well-placed source (my cousin)", "an ITK account with 11 followers",
+  "the player's Uber driver", "a fortune cookie", "a leaked group chat",
+  "a bloke who once met Peter Crouch"
+];
+
+const tags = ["Exclusive", "Breaking", "Here we go", "Developing", "Shock move"];
+
+// A FUNCTION is a reusable recipe. This one picks a random item from any list.
+// Math.random() gives a number between 0 and 1; we scale it to the list length.
+function pick(list) {
+  const position = Math.floor(Math.random() * list.length);
+  return list[position];
+}
+
+// This function builds one complete rumour by picking from each list.
+function makeRumour() {
+  const player = pick(players);
+  const buyer = pick(clubs);
+  let seller = pick(clubs);
+  // A LOOP: if we picked the same club twice, keep picking until it's different.
+  while (seller === buyer) {
+    seller = pick(clubs);
+  }
+  // Backticks ` ` let us glue text and variables together using ${...}.
+  return {
+    tag: pick(tags),
+    text: `${buyer} are closing in on ${seller}'s ${player} for ${pick(fees)}. ${pick(twists)}`,
+    source: `Source: ${pick(sources)}`,
+    reliability: Math.floor(Math.random() * 12) // 0 to 11 percent, always rubbish
+  };
+}
+
+// FIND the elements on the page using the id name tags from the HTML above.
+const button = document.getElementById("go");
+const history = document.getElementById("history");
+
+// LISTEN for a click. When it happens, run the code inside the curly braces.
+button.addEventListener("click", function () {
+  const rumour = makeRumour();
+
+  // Move the current rumour into the "Earlier today" list before replacing it.
+  const current = document.getElementById("rumour").textContent;
+  if (current !== "Press the button to start the gossip.") {
+    const item = document.createElement("li");
+    item.textContent = current;
+    history.prepend(item);          // add to the top of the list
+    if (history.children.length > 5) {
+      history.lastElementChild.remove(); // only keep the 5 most recent
+    }
+  }
+
+  // UPDATE the page with the new rumour.
+  document.getElementById("tag").textContent = rumour.tag;
+  document.getElementById("rumour").textContent = rumour.text;
+  document.getElementById("source").textContent = rumour.source;
+  document.getElementById("meter").style.width = rumour.reliability + "%";
+  document.getElementById("meter-label").textContent = rumour.reliability + "%";
+});
+
+// Show one rumour straight away so the page isn't empty when it opens.
+button.click();
+</script>
+</body>
+</html>
