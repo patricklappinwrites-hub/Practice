@@ -172,7 +172,7 @@
 
   <h2>Earlier today</h2>
   <ol id="history"></ol>
-  <p class="note">All players, fees and sources are made up. Clubs are real, and they would like you to know they have not agreed to any of this.</p>
+  <p class="note">All players, quotes and sources are made up. Clubs are real, and they would like you to know they have not agreed to any of this.</p>
 </div>
 
 <script>
@@ -214,23 +214,48 @@ const lastNames = [
   "Tinkle", "Slash", "Wee", "Trench", "Arzobispo", "Exequias", "Calice"
 ];
 
-const fees = [
-  "£95 million", "£4.20 and a sausage roll", "a signed photo of Jamie Redknapp",
-  "two goats and a pressure washer", "£1 and the club's best kit man",
-  "an undisclosed fee (it's a Greggs voucher)", "£300 million paid in Monopoly money",
-  "a lifetime supply of Bovril", "a player to be named later (probably Kevin)"
-];
 
 const twists = [
-  "He will play as a goalkeeper despite being 5ft 2.",
-  "His agent is his nan.",
-  "Medical scheduled for Tuesday, at a vet.",
-  "He has asked for his own karaoke room at the training ground.",
-  "The deal hinges on whether he can find the stadium.",
-  "He has already been photographed holding the wrong club's scarf.",
-  "The manager has never heard of him.",
-  "He wants the number 0.",
-  "Personal terms agreed, but only in Welsh."
+  "He is tempted by the big horses they have.",
+  "Negotiations expected to be steamy.",
+  "There are real emotions involved.",
+  "What's it got to do with you?",
+  "Pudding demands not considered a problem.",
+  "His wife is a friendly lady.",
+  "Lou Bega said to be 'concerned'.",
+  "His lumps. His lumps.",
+  "'Mind what you do with them barrels' star told.",
+  "Wantaway come and get me plea falls on fertile ground. Just wants to be happy.",
+  "South Utsira, high pressure, low reward.",
+  "Snakes. They're all snakes.",
+  "What's this, part-timer?!!!",
+  "Player believed to be a martyr to his corns.",
+  "Three-time Rear of the Year sees only happiness for you now.",
+  "I didn't want to do this, you know. I was predicted the grades to get into the Golf Sale game but I wasn't hungry enough.",
+  "Boring, me? She's the one that never has the TV off.",
+  "Player, believed to be in a parasexual relationship with Alexander Pope, wants better access to motorways.",
+  "Opportunity to retrain at flagship Asda store too good to refuse.",
+  "Sells mopeds on the side, apparently.",
+  "He's got one of them fire sticks. Gets all the films early. Dubbed into Kazakh, like, but you would, wouldn't you?",
+  "I don't like him in ochre.",
+  "Best Frank Spencer impression in football, hands down.",
+  "His dad used to fight the other dads.",
+  "Always has to have the last word, that bloke.",
+  "She said he was too old for Easter eggs. You're never too bloody old.",
+  "It's the fleece lining. Really brings his eyes out.",
+  "Contact his sister if you want to talk to him. He's not on the phone.",
+  "All that money and not enough for a toothbrush.",
+  "There's edgy and there's offensive.",
+  "Player described as 'nice and down to earth. Maybe as friends?'",
+  "Manager said to love him, but isn't IN LOVE with him. I know.",
+  "See the way he looked at you then?",
+  "Player said to be 'like Marmite. Doesn't know when to leave the spoon and start spreading'.",
+  "Chairman: he has a buttery charm I can't say no to.",
+  "Came to ours in his new gear last week. Didn't have the heart to tell him.",
+  "Player understood to not know own strength.",
+  "Player claims to be unbothered by grasses because his mum knows he vapes.",
+  "You know him. Used to go out with Dangly Kelly in the sixth-form. The one with the chest.",
+  "He's a right laugh."
 ];
 
 const sources = [
@@ -261,7 +286,7 @@ function makeRumour() {
   // Backticks ` ` let us glue text and variables together using ${...}.
   return {
     tag: pick(tags),
-    text: `${buyer} are closing in on ${seller}'s ${player} for ${pick(fees)}. ${pick(twists)}`,
+    text: `${buyer} are closing in on ${seller}'s ${player}. ${pick(twists)}`,
     source: `Source: ${pick(sources)}`,
     reliability: Math.floor(Math.random() * 12) // 0 to 11 percent, always rubbish
   };
