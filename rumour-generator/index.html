@@ -187,10 +187,31 @@ const clubs = [
   "Wrexham", "Real Madrid", "Barcelona", "Bayern Munich", "Accrington Stanley"
 ];
 
-const players = [
-  "Dazza Pemberton-Quayle", "Lionel Fizzwick", "Kai Baguette", "Sven Thunderboots",
-  "Mo 'The Fridge' Okafor", "Bartholomew Nutmeg", "Jordi Puddleby", "Ezra Volleyhaus",
-  "Gary 'Two Lungs' Fenwick", "Pedro Offside"
+// Player names are built from two lists: a random first name plus a random
+// last name. 61 first names x 66 last names = over 4,000 possible players!
+const firstNames = [
+  "Geronimo", "Clive", "Gunther", "Derek", "Peter", "Gavin", "Craig",
+  "St John", "Pontus", "Mustapha", "Clerk", "Clint", "Gordon", "Crispin",
+  "Topher", "Marvin", "Hector", "Horace", "Aubrey", "L'Dave", "deColin",
+  "Claude", "Want", "Tuesday", "Boris", "Maxim", "Alexei", "Bruno", "Paddy",
+  "Carl", "Otto", "Étienne", "Pierre", "Carlos", "Franco", "Pip", "Vito",
+  "Dino", "Nuno", "Osian", "Algy", "Carwyn", "Mick", "Barry", "Gary", "Jock",
+  "Lars", "Erik", "Anders", "Ifeanyichukwu", "Okonkwo", "Owolabi",
+  "Cheikhou", "Babacar", "Min-jun", "Young-ho", "Akira", "Tekeshi", "Brutus",
+  "Walter d'Nigel", "Arnold"
+];
+
+const lastNames = [
+  "Onions", "Pill", "Garter", "Penrice", "Trowel", "Bread", "Klinger",
+  "Minogue", "Garcia", "Vasquez", "Picasso", "Jung", "Morrissey", "Fridge",
+  "Knee", "Cardigan", "Storms", "Twat", "Bruise", "Savage", "Knock",
+  "Embassy", "Coffin", "Landing", "Leicester", "Peng", "Pint", "Bedford",
+  "Shrewsbury", "Monaco", "Philadelphia", "Heraclitus", "Confucius", "Moon",
+  "Lee", "Cundick", "Kok", "Pieces", "Gemini", "Stebbings", "Wrench",
+  "Bugner", "Windward", "Recreation", "Immobile", "Calabaza", "Process",
+  "Featherstone-Haigh", "Graham-Greene", "Grott", "Savetopdf", "Fawlty",
+  "Paternoster", "Parsley", "Beanland", "Flat", "Pallet", "Fuego", "Besos",
+  "Tinkle", "Slash", "Wee", "Trench", "Arzobispo", "Exequias", "Calice"
 ];
 
 const fees = [
@@ -230,7 +251,7 @@ function pick(list) {
 
 // This function builds one complete rumour by picking from each list.
 function makeRumour() {
-  const player = pick(players);
+  const player = pick(firstNames) + " " + pick(lastNames);
   const buyer = pick(clubs);
   let seller = pick(clubs);
   // A LOOP: if we picked the same club twice, keep picking until it's different.
