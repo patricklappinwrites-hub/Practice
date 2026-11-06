@@ -478,6 +478,33 @@ const sources = [
   "a bloke who once met Peter Crouch"
 ];
 
+// How the buying club feels about the player. Each one includes its own
+// "are", "were" or nothing, so the sentence always reads properly.
+const links = [
+  "are closing in on",
+  "are poised to swoop for",
+  "are eyeing",
+  "are sweet on",
+  "fancy",
+  "are hard for",
+  "really like, like in that way,",
+  "are seeing a new side of",
+  "have feelings for",
+  "don't know, just always had a thing for",
+  "covet and demand",
+  "love and are IN LOVE with",
+  "are just looking at",
+  "deny getting off with",
+  "swear on nan's grave nothing happened with",
+  "are all over the Snapchat of",
+  "can't stop thinking about",
+  "are thinking of texting",
+  "claim to be just mates with",
+  "were caught in a cupboard with",
+  "are sniffing the farts of",
+  "are finished - for good this time - with"
+];
+
 const tags = ["Exclusive", "Breaking", "Here we go", "Developing", "Shock move"];
 
 // A FUNCTION is a reusable recipe. This one picks a random item from any list.
@@ -499,7 +526,7 @@ function makeRumour() {
   // Backticks ` ` let us glue text and variables together using ${...}.
   return {
     tag: pick(tags),
-    text: `${buyer} are closing in on ${seller}'s ${player}. ${pick(twists)}`,
+    text: `${buyer} ${pick(links)} ${seller}'s ${player}. ${pick(twists)}`,
     source: `Source: ${pick(sources)}`,
     reliability: Math.floor(Math.random() * 12) // 0 to 11 percent, always rubbish
   };
