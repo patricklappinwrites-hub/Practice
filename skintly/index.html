@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--
+  SKINTLY: the app for microborrowing.
+  New idea in this step: the app REMEMBERS things. Every time you borrow,
+  we add an entry to a list (the "ledger") and save it in the browser,
+  so it is still there when you come back tomorrow.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skintly</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=DM+Sans:wght@400;600&display=swap">
+<style>
+  /* Layout: a phone-shaped fintech app. Balance card on top, product buttons, then the ledger. */
+  :root {
+    --bg: #e9ecf2; --phone: #ffffff; --ink: #14161f; --muted: #6a7080;
+    --brand: #5b3df5;      /* smug fintech purple */
+    --brand-ink: #ffffff;
+    --owe: #e0413a;        /* money you owe */
+    --line: #e3e5ec;
+    --display: "Bricolage Grotesque", "Arial Black", sans-serif;
+    --body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0d13; --phone: #171923; --ink: #f1f2f7; --muted: #9da3b4;
+      --brand: #8b74ff; --brand-ink: #0c0d13; --owe: #ff6b63; --line: #2a2d3b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0d13; --phone: #171923; --ink: #f1f2f7; --muted: #9da3b4;
+    --brand: #8b74ff; --brand-ink: #0c0d13; --owe: #ff6b63; --line: #2a2d3b; color-scheme: dark;
+  }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45; }
+  .wrap { padding-block: 24px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .phone { max-width: 400px; margin: 0 auto; background: var(--phone); border: 1px solid var(--line); border-radius: 28px; padding: 22px 18px; display: flex; flex-direction: column; gap: 18px; }
+  .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 28px; color: var(--brand); letter-spacing: -0.02em; }
+  .beta { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .balance { background: var(--brand); color: var(--brand-ink); border-radius: 18px; padding: 18px; }
+  .balance small { opacity: 0.85; }
+  .balance strong { display: block; font-family: var(--display); font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 12px; color: var(--muted); }
+  .stats b { display: block; font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 17px; margin: 0; }
+  .products { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .products button { text-align: left; background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 12px; font: inherit; cursor: pointer; }
+  .products button:hover { border-color: var(--brand); }
+  .products button span { display: block; font-size: 13px; color: var(--muted); }
+  button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  li .what { min-width: 0; }
+  li .what small { display: block; color: var(--muted); }
+  li .amt { color: var(--owe); font-weight: 600; white-space: nowrap; }
+  li.repaid .amt { color: var(--muted); text-decoration: line-through; }
+  .repay { align-self: start; background: var(--brand); color: var(--brand-ink); border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
+  .empty { color: var(--muted); font-size: 14px; margin: 0; }
+  .reset { background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; align-self: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="phone">
+    <div class="top"><span class="logo">Skintly</span><span class="beta">Pre-seed · raising £4.20</span></div>
+
+    <div class="balance">
+      <small>You currently owe</small>
+      <strong id="total">£0.00</strong>
+      <small>Repayment model: vibes-based</small>
+    </div>
+
+    <div class="stats">
+      <div><b id="loans">0</b>loans taken</div>
+      <div><b id="friends">0</b>former friends</div>
+      <div><b>100%</b>lighter retention</div>
+    </div>
+
+    <h2>Borrow something</h2>
+    <!-- data-item tells the JavaScript which product each button is. -->
+    <div class="products">
+      <button type="button" data-item="quid">Borrow a quid<span>Peer-to-peer liquidity</span></button>
+      <button type="button" data-item="sip">"Can I have a sip of that?"<span>Fractional beverage ownership</span></button>
+      <button type="button" data-item="roll">Greggs Sausage Roll Facility<span>Bridge financing · beta</span></button>
+      <button type="button" data-item="rollie">Nicotine liquidity<span>One rollie, returned never</span></button>
+    </div>
+
+    <h2>Your ledger</h2>
+    <ul id="ledger"></ul>
+    <p class="empty" id="empty">Nothing owed. Suspicious.</p>
+    <button type="button" class="reset" id="reset">Start again (new pub)</button>
+  </div>
+</div>
+
+<script>
+// ===== THE PRODUCTS =====
+// An OBJECT is like a labelled box: each product has a name and a value in pounds.
+const products = {
+  quid:   { name: "A quid",                 value: 1.00 },
+  sip:    { name: "A sip of their pint",    value: 0.65 },
+  roll:   { name: "One Greggs sausage roll", value: 1.35 },
+  rollie: { name: "A rollie",               value: 0.40 }
+};
+const lenders = ["Big Steve", "Your cousin Dean", "A man called Tonto", "Sharon from work", "Barry (Wetherspoons)", "The quiet lad"];
+
+// ===== SAVING AND LOADING =====
+// localStorage is a small notebook the browser keeps for this page.
+// It only stores text, so we turn our list into text (JSON) to save it,
+// and back into a list to load it. "try/catch" means: if the notebook
+// is locked (private browsing, say), carry on without crashing.
+function load() {
+  try { return JSON.parse(localStorage.getItem("skintly-ledger")) || []; }
+  catch (e) { return []; }
+}
+function save() {
+  try { localStorage.setItem("skintly-ledger", JSON.stringify(ledger)); } catch (e) {}
+}
+
+// The ledger is our list of loans. Start with whatever was saved last time.
+let ledger = load();
+
+// ===== DRAWING THE SCREEN =====
+// One function redraws everything from the ledger. Whenever the data
+// changes, we call draw(). This "data first, then draw" idea is at the
+// heart of almost every app.
+function draw() {
+  const list = document.getElementById("ledger");
+  list.innerHTML = ""; // wipe the old list, then rebuild it
+
+  let total = 0;
+  let friendsLost = 0;
+  for (const loan of ledger) {
+    if (!loan.repaid) total += loan.value;
+    if (loan.repaid) friendsLost += 1;
+
+    const row = document.createElement("li");
+    if (loan.repaid) row.className = "repaid";
+    row.innerHTML = `
+      <div class="what">${loan.name}<small>from ${loan.lender}${loan.repaid ? " · now a former friend" : ""}</small></div>
+      <div class="amt">£${loan.value.toFixed(2)}</div>`;
+    if (!loan.repaid) {
+      const btn = document.createElement("button");
+      btn.className = "repay";
+      btn.textContent = "I'll get you back";
+      btn.addEventListener("click", function () { loan.repaid = true; save(); draw(); });
+      row.appendChild(btn);
+    }
+    list.appendChild(row);
+  }
+
+  document.getElementById("total").textContent = "£" + total.toFixed(2);
+  document.getElementById("loans").textContent = ledger.length;
+  document.getElementById("friends").textContent = friendsLost;
+  document.getElementById("empty").hidden = ledger.length > 0;
+}
+
+// ===== BUTTONS =====
+// querySelectorAll finds every product button; we give each one a click listener.
+document.querySelectorAll("[data-item]").forEach(function (button) {
+  button.addEventListener("click", function () {
+    const product = products[button.dataset.item];
+    const lender = lenders[Math.floor(Math.random() * lenders.length)];
+    ledger.unshift({ name: product.name, value: product.value, lender: lender, repaid: false });
+    save();
+    draw();
+  });
+});
+
+document.getElementById("reset").addEventListener("click", function () {
+  ledger = [];
+  save();
+  draw();
+});
+
+// First visit with nothing saved? Add a couple of example loans so the app isn't empty.
+if (ledger.length === 0) {
+  ledger = [
+    { name: "One Greggs sausage roll", value: 1.35, lender: "Big Steve", repaid: false },
+    { name: "A quid", value: 1.00, lender: "Sharon from work", repaid: true }
+  ];
+}
+draw();
+</script>
+</body>
+</html>
