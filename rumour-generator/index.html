@@ -14,7 +14,7 @@
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Deadline Day Rumour Mill</title>
+<title>[PAGE TITLE]</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;600;700&display=swap">
@@ -151,28 +151,15 @@
 <body>
 <!-- Everything inside <body> is what you see on the page. -->
 <div class="wrap">
-  <div class="band"><span class="live">Live</span> Transfer deadline day</div>
-
-  <h1>Deadline Day Rumour Mill</h1>
-  <p class="intro">Every click invents a brand new transfer rumour. None of them are true. Some of them are not even possible.</p>
 
   <!-- The "id" on each element is a name tag, so the JavaScript below can find it and change it. -->
   <div class="card" aria-live="polite">
-    <span class="tag" id="tag">Exclusive</span>
-    <p class="rumour" id="rumour">Press the button to start the gossip.</p>
-    <p class="source" id="source">Source: nobody yet</p>
-    <div class="meter">
-      <span>Reliability</span>
-      <div class="meter-bar"><div class="meter-fill" id="meter" style="width: 0%"></div></div>
-      <span id="meter-label">0%</span>
-    </div>
+    <p class="rumour" id="rumour"></p>
   </div>
 
-  <button id="go" type="button">Generate a rumour</button>
+  <button id="go" type="button">[BUTTON TEXT]</button>
 
-  <h2>Earlier today</h2>
   <ol id="history"></ol>
-  <p class="note">All players, quotes and sources are made up. Clubs are real, and they would like you to know they have not agreed to any of this.</p>
 </div>
 
 <script>
@@ -471,13 +458,6 @@ const twists = [
   "He's a right laugh."
 ];
 
-const sources = [
-  "a man in a Wetherspoons", "a pigeon outside the training ground",
-  "a well-placed source (my cousin)", "an ITK account with 11 followers",
-  "the player's Uber driver", "a fortune cookie", "a leaked group chat",
-  "a bloke who once met Peter Crouch"
-];
-
 // How the buying club feels about the player.
 // Written in tabloid headline style, so small words are dropped on purpose.
 const links = [
@@ -505,13 +485,16 @@ const links = [
   "finished - for good this time - with"
 ];
 
-const tags = ["Exclusive", "Breaking", "Here we go", "Developing", "Shock move"];
-
 // A FUNCTION is a reusable recipe. This one picks a random item from any list.
 // Math.random() gives a number between 0 and 1; we scale it to the list length.
 function pick(list) {
   const position = Math.floor(Math.random() * list.length);
   return list[position];
+}
+
+// Club names ending in s get just an apostrophe (Wanderers'), others get 's (Chelsea's).
+function possessive(name) {
+  return name.endsWith("s") ? name + "'" : name + "'s";
 }
 
 // This function builds one complete rumour by picking from each list.
@@ -525,10 +508,7 @@ function makeRumour() {
   }
   // Backticks ` ` let us glue text and variables together using ${...}.
   return {
-    tag: pick(tags),
-    text: `${buyer} ${pick(links)} ${seller}'s ${player}. ${pick(twists)}`,
-    source: `Source: ${pick(sources)}`,
-    reliability: Math.floor(Math.random() * 12) // 0 to 11 percent, always rubbish
+    text: `${buyer} ${pick(links)} ${possessive(seller)} ${player}. ${pick(twists)}`,
   };
 }
 
@@ -540,9 +520,9 @@ const history = document.getElementById("history");
 button.addEventListener("click", function () {
   const rumour = makeRumour();
 
-  // Move the current rumour into the "Earlier today" list before replacing it.
+  // Move the current rumour into the history list before replacing it.
   const current = document.getElementById("rumour").textContent;
-  if (current !== "Press the button to start the gossip.") {
+  if (current !== "") {
     const item = document.createElement("li");
     item.textContent = current;
     history.prepend(item);          // add to the top of the list
@@ -552,11 +532,7 @@ button.addEventListener("click", function () {
   }
 
   // UPDATE the page with the new rumour.
-  document.getElementById("tag").textContent = rumour.tag;
   document.getElementById("rumour").textContent = rumour.text;
-  document.getElementById("source").textContent = rumour.source;
-  document.getElementById("meter").style.width = rumour.reliability + "%";
-  document.getElementById("meter-label").textContent = rumour.reliability + "%";
 });
 
 // Show one rumour straight away so the page isn't empty when it opens.
